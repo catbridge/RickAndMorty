@@ -5,9 +5,15 @@
       <map>
         <entry key="..\:/AndroidStudioProjects/RickAndMorty/app/src/main/res/layout/activity_main.xml" value="0.3625" />
         <entry key="..\:/AndroidStudioProjects/RickAndMorty/app/src/main/res/layout/fragment_details.xml" value="0.3625" />
-        <entry key="..\:/AndroidStudioProjects/RickAndMorty/app/src/main/res/layout/fragment_list.xml" value="0.3625" />
+        <entry key="..\:/AndroidStudioProjects/RickAndMorty/app/src/main/res/layout/fragment_list.xml" value="0.33" />
+        <entry key="..\:/AndroidStudioProjects/RickAndMorty/app/src/main/res/layout/fragment_room.xml" value="0.3625" />
+        <entry key="..\:/AndroidStudioProjects/RickAndMorty/app/src/main/res/layout/fragment_room_character.xml" value="0.36614583333333334" />
+        <entry key="..\:/AndroidStudioProjects/RickAndMorty/app/src/main/res/layout/fragment_room_list.xml" value="0.36614583333333334" />
+        <entry key="..\:/AndroidStudioProjects/RickAndMorty/app/src/main/res/layout/fragment_tab.xml" value="0.3625" />
         <entry key="..\:/AndroidStudioProjects/RickAndMorty/app/src/main/res/layout/item_character.xml" value="0.3625" />
         <entry key="..\:/AndroidStudioProjects/RickAndMorty/app/src/main/res/layout/item_loading.xml" value="0.3625" />
+        <entry key="..\:/AndroidStudioProjects/RickAndMorty/app/src/main/res/layout/item_room_character.xml" value="0.2191780821917808" />
+        <entry key="..\:/AndroidStudioProjects/RickAndMorty/app/src/main/res/layout/tab_fragment.xml" value="0.36666666666666664" />
         <entry key="..\:/AndroidStudioProjects/RickAndMorty/app/src/main/res/menu/menu_list.xml" value="0.36666666666666664" />
       </map>
     </option>

@@ -8,4 +8,10 @@
         android:icon="@android:drawable/ic_menu_help"
         app:showAsAction="ifRoom"
         android:title="@string/information" />
+
+    <item
+        android:id="@+id/history"
+        android:icon="@android:drawable/ic_menu_recent_history"
+        app:showAsAction="ifRoom"
+        android:title="@string/history" />
 </menu>

@@ -1,5 +1,6 @@
 package com.example.rickandmorty.model
 
+
 data class CharacterDetails(
     val id: Int,
     val name: String,

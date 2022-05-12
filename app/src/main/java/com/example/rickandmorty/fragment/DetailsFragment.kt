@@ -5,17 +5,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.navigation.ui.setupWithNavController
 import coil.load
+import com.example.rickandmorty.R
 import com.example.rickandmorty.databinding.FragmentDetailsBinding
-import com.example.rickandmorty.model.CharacterDetails
-import com.example.rickandmorty.retrofit.RickAndMortyService
-import com.google.android.material.snackbar.Snackbar
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import com.example.rickandmorty.repository.RickAndMortyRepository
+import kotlinx.coroutines.launch
 
 class DetailsFragment : Fragment() {
 
@@ -23,6 +21,7 @@ class DetailsFragment : Fragment() {
     private val binding get() = requireNotNull(_binding) { "View was destroyed" }
 
     private val args: DetailsFragmentArgs by navArgs()
+    private val repository = RickAndMortyRepository()
 
 
     override fun onCreateView(
@@ -39,9 +38,7 @@ class DetailsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         loadCharacterDetails()
-
         with(binding) {
             toolbar.setupWithNavController(findNavController())
         }
@@ -53,36 +50,28 @@ class DetailsFragment : Fragment() {
     }
 
     private fun loadCharacterDetails() {
-        RickAndMortyService.rickAndMortyApi.getCharacterDetails(args.id)
-            .enqueue(object : Callback<CharacterDetails> {
-                override fun onResponse(
-                    call: Call<CharacterDetails>,
-                    response: Response<CharacterDetails>
-                ) {
-                    if (response.isSuccessful) {
-                        val characterDetails = response.body() ?: return
-                        with(binding) {
-                            characterImg.load(characterDetails.image)
-                            characterName.text = characterDetails.name
-                            characterSpecies.text = "Species: ${characterDetails.species}"
-                            characterGender.text = "Gender: ${characterDetails.gender}"
-                            characterStatus.text = "Status: ${characterDetails.status}"
-                        }
-                    } else {
-                        handleErrors(response.errorBody()?.string() ?: "")
-                    }
+        viewLifecycleOwner.lifecycleScope.launch {
+            try {
+                val characterDetails = repository.getCharacterDetails(args.id)
+                with(binding) {
+                    characterImg.load(characterDetails.image)
+                    characterName.text = characterDetails.name
+                    characterSpecies.text =
+                        requireContext().getString(R.string.species, characterDetails.species)
+                    characterGender.text =
+                        requireContext().getString(R.string.gender, characterDetails.gender)
+                    characterStatus.text =
+                        requireContext().getString(R.string.status, characterDetails.status)
                 }
+            } catch (e: Throwable) {
+                error(ERROR_MESSAGE)
+            }
 
-                override fun onFailure(call: Call<CharacterDetails>, t: Throwable) {
-                    handleErrors(t.message ?: "")
-                }
-            })
+        }
     }
 
 
-    private fun handleErrors(errorMessage: String) {
-        Snackbar.make(binding.root, errorMessage, Snackbar.LENGTH_SHORT)
-            .setAction(android.R.string.ok) {}
-            .show()
+    companion object {
+        private const val ERROR_MESSAGE = "Something went wrong"
     }
 }
