@@ -2,14 +2,15 @@ package com.example.rickandmorty.room
 
 import androidx.room.*
 import com.example.rickandmorty.model.Character
-import com.example.rickandmorty.model.CharacterDetails
-import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface CharacterDao {
 
+    @Query("SELECT * FROM character LIMIT :limit OFFSET :offset")
+    suspend fun getCharacters(limit: Int, offset: Int): List<Character>
+
     @Query("SELECT * FROM character")
-    suspend fun getCharacters(): List<Character>
+    suspend fun getAllCharacters(): List<Character>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(character: Character)

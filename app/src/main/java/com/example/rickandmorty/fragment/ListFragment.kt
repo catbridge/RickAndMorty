@@ -13,20 +13,16 @@ import com.example.rickandmorty.*
 import com.example.rickandmorty.adapter.CharacterAdapter
 import com.example.rickandmorty.databinding.FragmentListBinding
 import com.example.rickandmorty.model.PagingData
-import com.example.rickandmorty.repository.RickAndMortyRepository
-import kotlinx.coroutines.launch
+import com.example.rickandmorty.viewModel.ListViewModel
+import kotlinx.coroutines.flow.*
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
 class ListFragment : Fragment() {
     private var _binding: FragmentListBinding? = null
-    private val binding
-        get() = requireNotNull(_binding) {
-            "View was destroyed"
-        }
+    private val binding get() = requireNotNull(_binding) { "View was destroyed" }
 
-    private val characterDao by lazy {
-        requireContext().characterDatabase.characterDao()
-    }
+    private val viewModel by viewModel<ListViewModel>()
 
     private val adapter = CharacterAdapter { character ->
         findNavController().navigate(
@@ -34,9 +30,6 @@ class ListFragment : Fragment() {
         )
     }
 
-    private var isLoading = false
-    private var currentPage = 1
-    private val repository = RickAndMortyRepository()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -53,42 +46,53 @@ class ListFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        loadCharacters()
-
         with(binding) {
             toolbar.setOnMenuItemClickListener {
-                if (it.itemId == R.id.info_button) {
-                    showDialog()
-                    true
-                } else if (it.itemId == R.id.history) {
-                    findNavController().navigate(
-                        ListFragmentDirections.listToRoom()
-                    )
-                    true
-                } else {
-                    false
+                when (it.itemId) {
+                    R.id.info_button -> {
+                        showDialog()
+                        true
+                    }
+                    R.id.history -> {
+                        findNavController().navigate(
+                            ListFragmentDirections.listToRoom()
+                        )
+                        true
+                    }
+                    R.id.locations -> {
+                        findNavController().navigate(
+                            ListFragmentDirections.listToLocations()
+                        )
+                        true
+                    }
+                    else -> {
+                        false
+                    }
                 }
             }
 
             layoutSwiperefresh.setOnRefreshListener {
                 adapter.submitList(emptyList())
-                currentPage = 1
-                loadCharacters {
+                viewModel.onRefresh {
                     layoutSwiperefresh.isRefreshing = false
                 }
             }
 
-            val linearLayoutManager = LinearLayoutManager(
+            val layoutManager = LinearLayoutManager(
                 view.context, LinearLayoutManager.VERTICAL, false
             )
 
             recyclerView.adapter = adapter
-            recyclerView.layoutManager = linearLayoutManager
+            recyclerView.layoutManager = layoutManager
             recyclerView.addHorizontalSpaceDecoration(ITEM_SPACE)
-            recyclerView.addPaginationScrollListener(linearLayoutManager, ITEMS_TO_LOAD) {
-                loadCharacters()
+            recyclerView.addPaginationScrollListener(layoutManager, ITEMS_TO_LOAD) {
+                viewModel.onLoadMore()
             }
 
+            viewModel.dataFlow
+                .onEach { it ->
+                    adapter.submitList(it.map { PagingData.Content(it) })
+                }.launchIn(viewLifecycleOwner.lifecycleScope)
         }
     }
 
@@ -97,39 +101,6 @@ class ListFragment : Fragment() {
         _binding = null
     }
 
-    private fun loadCharacters(onLoadingFinished: () -> Unit = {}) {
-        if (isLoading) return
-        val loadingFinishedCallback = {
-            isLoading = false
-            onLoadingFinished()
-        }
-        val since = currentPage
-
-        viewLifecycleOwner.lifecycleScope.launch {
-            try {
-//          Тут я по разному пытался добавить правильное отображение списков из БД и АПИ, но даже
-//          в лучшем случае списки перемешивались. Так и не понял как правильно резализовать это
-//          вместе с paginationScrollListener, оставил так. Элементы из API в БД добавляются,
-//          посмотреть их можно в отдельном фрагменте, нажав по новой кнопке на тулбаре.
-
-//          val daoCharacters = characterDao.getCharacters()
-//          val daoList = daoCharacters.map { PagingData.Content(it) }
-//          adapter.submitList(daoList)
-                val characters = repository.getCharacters(since)
-                characterDao.insertList(characters.results)
-                val apiList = adapter.currentList
-                    .dropLastWhile { it == PagingData.Loading }
-                    .plus(characters.results.map { PagingData.Content(it) })
-                    .plus(PagingData.Loading)
-                adapter.submitList(apiList)
-                currentPage++
-                loadingFinishedCallback()
-
-            } catch (e: Throwable) {
-                error(ERROR_MESSAGE)
-            }
-        }
-    }
 
     private fun showDialog() {
         AlertDialog.Builder(requireContext())
@@ -139,10 +110,8 @@ class ListFragment : Fragment() {
             .show()
     }
 
-
     companion object {
         private const val ITEM_SPACE = 50
-        private const val ITEMS_TO_LOAD = 15
-        private const val ERROR_MESSAGE = "Something went wrong"
+        private const val ITEMS_TO_LOAD = 20
     }
 }

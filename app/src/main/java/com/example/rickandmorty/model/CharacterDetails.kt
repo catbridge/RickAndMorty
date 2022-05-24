@@ -7,5 +7,6 @@ data class CharacterDetails(
     val image: String,
     val species: String,
     val gender: String,
-    val status: String
+    val status: String,
+    val episode: List<String>
 )

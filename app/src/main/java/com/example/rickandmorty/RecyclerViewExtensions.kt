@@ -25,6 +25,7 @@ fun RecyclerView.addHorizontalSpaceDecoration(space: Int) {
     )
 }
 
+
 fun RecyclerView.addPaginationScrollListener(
     layoutManager: LinearLayoutManager,
     itemsToLoad: Int,
