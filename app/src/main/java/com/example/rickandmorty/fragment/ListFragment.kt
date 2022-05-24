@@ -6,25 +6,26 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.rickandmorty.R
+import com.example.rickandmorty.*
 import com.example.rickandmorty.adapter.CharacterAdapter
-import com.example.rickandmorty.addHorizontalSpaceDecoration
-import com.example.rickandmorty.addPaginationScrollListener
 import com.example.rickandmorty.databinding.FragmentListBinding
-import com.example.rickandmorty.model.CharacterList
 import com.example.rickandmorty.model.PagingData
-import com.example.rickandmorty.retrofit.RickAndMortyService
-import com.google.android.material.snackbar.Snackbar
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import com.example.rickandmorty.repository.RickAndMortyRepository
+import kotlinx.coroutines.launch
+
 
 class ListFragment : Fragment() {
     private var _binding: FragmentListBinding? = null
-    private val binding get() = requireNotNull(_binding) {
-        "View was destroyed"
+    private val binding
+        get() = requireNotNull(_binding) {
+            "View was destroyed"
+        }
+
+    private val characterDao by lazy {
+        requireContext().characterDatabase.characterDao()
     }
 
     private val adapter = CharacterAdapter { character ->
@@ -33,9 +34,9 @@ class ListFragment : Fragment() {
         )
     }
 
-    private var currentRequest: Call<CharacterList>? = null
     private var isLoading = false
     private var currentPage = 1
+    private val repository = RickAndMortyRepository()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -55,16 +56,23 @@ class ListFragment : Fragment() {
         loadCharacters()
 
         with(binding) {
-            toolbar.menu
-                .findItem(R.id.info_button)
-                .setOnMenuItemClickListener {
+            toolbar.setOnMenuItemClickListener {
+                if (it.itemId == R.id.info_button) {
                     showDialog()
                     true
+                } else if (it.itemId == R.id.history) {
+                    findNavController().navigate(
+                        ListFragmentDirections.listToRoom()
+                    )
+                    true
+                } else {
+                    false
                 }
+            }
 
             layoutSwiperefresh.setOnRefreshListener {
                 adapter.submitList(emptyList())
-                currentPage = 0
+                currentPage = 1
                 loadCharacters {
                     layoutSwiperefresh.isRefreshing = false
                 }
@@ -86,61 +94,48 @@ class ListFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        currentRequest?.cancel()
         _binding = null
     }
 
     private fun loadCharacters(onLoadingFinished: () -> Unit = {}) {
         if (isLoading) return
-
         val loadingFinishedCallback = {
             isLoading = false
             onLoadingFinished()
         }
-
         val since = currentPage
 
-        currentRequest = RickAndMortyService.rickAndMortyApi.getCharacters(since)
-        currentRequest?.enqueue(object : Callback<CharacterList> {
-            override fun onResponse(
-                call: Call<CharacterList>,
-                response: Response<CharacterList>
-            ) {
-                if (response.isSuccessful) {
-                    val newList = adapter.currentList
-                        .dropLastWhile { it == PagingData.Loading }
-                        .plus(response.body()?.results?.map { PagingData.Content(it) }.orEmpty())
-                        .plus(PagingData.Loading)
-                    adapter.submitList(newList)
-                    currentPage++
+        viewLifecycleOwner.lifecycleScope.launch {
+            try {
+//          Тут я по разному пытался добавить правильное отображение списков из БД и АПИ, но даже
+//          в лучшем случае списки перемешивались. Так и не понял как правильно резализовать это
+//          вместе с paginationScrollListener, оставил так. Элементы из API в БД добавляются,
+//          посмотреть их можно в отдельном фрагменте, нажав по новой кнопке на тулбаре.
 
-                } else {
-                    handleErrors(response.errorBody()?.string() ?: ERROR_MESSAGE)
-                }
+//          val daoCharacters = characterDao.getCharacters()
+//          val daoList = daoCharacters.map { PagingData.Content(it) }
+//          adapter.submitList(daoList)
+                val characters = repository.getCharacters(since)
+                characterDao.insertList(characters.results)
+                val apiList = adapter.currentList
+                    .dropLastWhile { it == PagingData.Loading }
+                    .plus(characters.results.map { PagingData.Content(it) })
+                    .plus(PagingData.Loading)
+                adapter.submitList(apiList)
+                currentPage++
                 loadingFinishedCallback()
-                currentRequest = null
-            }
 
-            override fun onFailure(call: Call<CharacterList>, t: Throwable) {
-                handleErrors(t.message ?: ERROR_MESSAGE)
-                loadingFinishedCallback()
-                currentRequest = null
+            } catch (e: Throwable) {
+                error(ERROR_MESSAGE)
             }
-        })
-    }
-    private fun handleErrors(errorMessage: String) {
-        Snackbar.make(binding.root, errorMessage, Snackbar.LENGTH_SHORT)
-            .setAction(android.R.string.ok) {}
-            .show()
+        }
     }
 
-    private  fun showDialog(){
+    private fun showDialog() {
         AlertDialog.Builder(requireContext())
             .setTitle("Information")
             .setMessage("Click on a character in the list to see more information about him")
-            .setPositiveButton(android.R.string.ok){dialog, buttonId ->
-
-            }
+            .setPositiveButton(android.R.string.ok, null)
             .show()
     }
 
