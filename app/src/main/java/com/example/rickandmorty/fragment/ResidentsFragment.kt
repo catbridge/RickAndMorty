@@ -8,33 +8,32 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import androidx.navigation.ui.setupWithNavController
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.rickandmorty.R
 import com.example.rickandmorty.adapter.CharacterAdapter
 import com.example.rickandmorty.addHorizontalSpaceDecoration
-import com.example.rickandmorty.databinding.FragmentRoomListBinding
+import com.example.rickandmorty.databinding.FragmentResidentsListBinding
 import com.example.rickandmorty.model.PagingData
-import com.example.rickandmorty.viewModel.RoomViewModel
+import com.example.rickandmorty.viewModel.ResidentsViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.core.parameter.parametersOf
 
-/**
- * Фрагмент добавлен для просмотра элементов в базе данных.
- */
-class RoomFragment : Fragment() {
-    private var _binding: FragmentRoomListBinding? = null
-    private val binding
-        get() = requireNotNull(_binding) {
-            "View was destroyed"
-        }
+class ResidentsFragment : Fragment() {
+    private var _binding: FragmentResidentsListBinding? = null
+    private val binding get() = requireNotNull(_binding) { "View was destroyed" }
 
-    private val viewModel by viewModel<RoomViewModel>()
+    private val viewModel by viewModel<ResidentsViewModel> {
+        parametersOf(args.id)
+    }
+
+    private val args: ResidentsFragmentArgs by navArgs()
 
     private val adapter = CharacterAdapter { character ->
         findNavController().navigate(
-            RoomFragmentDirections.actionRoomToDetails(character.id)
+            ResidentsFragmentDirections.actionResidentsToDetails(character.id)
         )
     }
 
@@ -44,7 +43,7 @@ class RoomFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        return FragmentRoomListBinding.inflate(inflater, container, false)
+        return FragmentResidentsListBinding.inflate(inflater, container, false)
             .also { binding ->
                 _binding = binding
             }
@@ -53,11 +52,9 @@ class RoomFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        showCharacters()
-
         with(binding) {
-            roomToolbar.setOnMenuItemClickListener {
+            toolbarResidents.setupWithNavController(findNavController())
+            toolbarResidents.setOnMenuItemClickListener {
                 when (it.itemId) {
                     R.id.info_button -> {
                         showDialog()
@@ -68,13 +65,15 @@ class RoomFragment : Fragment() {
                     }
                 }
             }
-            roomToolbar.setupWithNavController(findNavController())
-            val linearLayoutManager = LinearLayoutManager(
-                view.context, LinearLayoutManager.VERTICAL, false
-            )
+
             recyclerView.adapter = adapter
-            recyclerView.layoutManager = linearLayoutManager
             recyclerView.addHorizontalSpaceDecoration(ITEM_SPACE)
+
+            viewModel.residentsFlow
+                .onEach { it ->
+                    adapter.submitList(it.map { PagingData.Content(it) })
+                }.launchIn(viewLifecycleOwner.lifecycleScope)
+
         }
     }
 
@@ -83,20 +82,11 @@ class RoomFragment : Fragment() {
         _binding = null
     }
 
-    private fun showCharacters() {
-        viewModel.characterDaoFlow
-            .onEach { it ->
-                adapter.submitList(it.map { PagingData.Content(it) })
-            }.launchIn(viewLifecycleOwner.lifecycleScope)
-    }
 
     private fun showDialog() {
         AlertDialog.Builder(requireContext())
             .setTitle("Information")
-            .setMessage(
-                "This is a list of characters uploaded to a local database." +
-                        "Click on a character in the list to see more information about him"
-            )
+            .setMessage("Click on a character in the list to see more information about him")
             .setPositiveButton(android.R.string.ok, null)
             .show()
     }

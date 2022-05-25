@@ -16,6 +16,9 @@
         <action
             android:id="@+id/list_to_room"
             app:destination="@id/room" />
+        <action
+            android:id="@+id/list_to_locations"
+            app:destination="@id/locations" />
     </fragment>
 
     <fragment
@@ -34,9 +37,27 @@
         <action
             android:id="@+id/action_room_to_details"
             app:destination="@id/details" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/locations"
+        android:name="com.example.rickandmorty.fragment.LocationsFragment"
+        tools:layout="@layout/fragment_location_list">
         <action
-            android:id="@+id/room_to_list"
-            app:destination="@id/list" />
+            android:id="@+id/action_locations_to_residents"
+            app:destination="@id/residents" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/residents"
+        android:name="com.example.rickandmorty.fragment.ResidentsFragment"
+        tools:layout="@layout/fragment_residents_list">
+        <argument
+            android:name="id"
+            app:argType="integer"/>
+        <action
+            android:id="@+id/action_residents_to_details"
+            app:destination="@id/details" />
     </fragment>
 
 </navigation>

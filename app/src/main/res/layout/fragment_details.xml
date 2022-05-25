@@ -11,59 +11,86 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="20dp"
-        app:title="Character Details"
-        app:titleTextColor="@color/white"
+        android:background="@color/purple_500"
         app:navigationIcon="?attr/homeAsUpIndicator"
-        android:background="@color/purple_500" />
-
-    <ImageView
-        android:id="@+id/character_img"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="20dp"
-        android:adjustViewBounds="true"
-        tools:ignore="ContentDescription"/>
+        app:title="Character Details"
+        app:titleTextColor="@color/white" />
 
     <TextView
         android:id="@+id/character_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="20dp"
         android:layout_gravity="center"
         android:textSize="24sp"
         tools:text="Rick Sanchez" />
 
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="horizontal"
+        android:padding="10dp">
 
-        <TextView
-            android:id="@+id/character_species"
+        <ImageView
+            android:id="@+id/character_img"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:textSize="24sp"
-            tools:text="Species: Humanoid"/>
+            android:adjustViewBounds="true"
+            app:srcCompat="@drawable/ic_launcher_foreground"
+            tools:ignore="ContentDescription" />
 
-        <TextView
-            android:id="@+id/character_gender"
-            android:layout_width="wrap_content"
+
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:textSize="24sp"
-            tools:text="Gender: Male" />
+            android:layout_marginStart="30dp"
+            android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/character_status"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:textSize="24sp"
-            tools:text="Status: Alive" />
+            <TextView
+                android:id="@+id/character_species"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:textSize="24sp"
+                tools:text="Species: Humanoid" />
 
+            <TextView
+                android:id="@+id/character_gender"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:textSize="24sp"
+                tools:text="Gender: Male" />
+
+            <TextView
+                android:id="@+id/character_status"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:textSize="24sp"
+                tools:text="Status: Alive" />
+        </LinearLayout>
     </LinearLayout>
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="@string/list_of_episodes"
+        android:textSize="22sp" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_view_episodes"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:clipToPadding="false"
+        android:padding="6dp"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        tools:itemCount="10"
+        tools:listitem="@layout/item_episode" />
 </LinearLayout>

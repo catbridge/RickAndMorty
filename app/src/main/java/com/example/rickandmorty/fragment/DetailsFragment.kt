@@ -11,9 +11,14 @@ import androidx.navigation.fragment.navArgs
 import androidx.navigation.ui.setupWithNavController
 import coil.load
 import com.example.rickandmorty.R
+import com.example.rickandmorty.adapter.EpisodeAdapter
+import com.example.rickandmorty.addHorizontalSpaceDecoration
 import com.example.rickandmorty.databinding.FragmentDetailsBinding
-import com.example.rickandmorty.repository.RickAndMortyRepository
-import kotlinx.coroutines.launch
+import com.example.rickandmorty.viewModel.DetailsViewModel
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.core.parameter.parametersOf
 
 class DetailsFragment : Fragment() {
 
@@ -21,7 +26,12 @@ class DetailsFragment : Fragment() {
     private val binding get() = requireNotNull(_binding) { "View was destroyed" }
 
     private val args: DetailsFragmentArgs by navArgs()
-    private val repository = RickAndMortyRepository()
+
+    private val viewModel by viewModel<DetailsViewModel> {
+        parametersOf(args.id)
+    }
+
+    private val adapter = EpisodeAdapter()
 
 
     override fun onCreateView(
@@ -41,6 +51,9 @@ class DetailsFragment : Fragment() {
         loadCharacterDetails()
         with(binding) {
             toolbar.setupWithNavController(findNavController())
+            recyclerViewEpisodes.addHorizontalSpaceDecoration(SPACE)
+            recyclerViewEpisodes.adapter = adapter
+
         }
     }
 
@@ -50,10 +63,10 @@ class DetailsFragment : Fragment() {
     }
 
     private fun loadCharacterDetails() {
-        viewLifecycleOwner.lifecycleScope.launch {
-            try {
-                val characterDetails = repository.getCharacterDetails(args.id)
-                with(binding) {
+        with(binding) {
+            viewModel
+                .characterDetailsFlow
+                .onEach { characterDetails ->
                     characterImg.load(characterDetails.image)
                     characterName.text = characterDetails.name
                     characterSpecies.text =
@@ -63,15 +76,17 @@ class DetailsFragment : Fragment() {
                     characterStatus.text =
                         requireContext().getString(R.string.status, characterDetails.status)
                 }
-            } catch (e: Throwable) {
-                error(ERROR_MESSAGE)
-            }
+                .launchIn(viewLifecycleOwner.lifecycleScope)
 
+            viewModel.episodesFlow
+                .onEach { episodes ->
+                    adapter.submitList(episodes)
+                }.launchIn(viewLifecycleOwner.lifecycleScope)
         }
     }
 
 
     companion object {
-        private const val ERROR_MESSAGE = "Something went wrong"
+        private const val SPACE = 10
     }
 }

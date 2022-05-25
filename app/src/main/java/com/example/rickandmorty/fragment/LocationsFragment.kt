@@ -11,40 +11,34 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupWithNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.rickandmorty.R
-import com.example.rickandmorty.adapter.CharacterAdapter
+import com.example.rickandmorty.adapter.LocationAdapter
 import com.example.rickandmorty.addHorizontalSpaceDecoration
-import com.example.rickandmorty.databinding.FragmentRoomListBinding
+import com.example.rickandmorty.addPaginationScrollListener
+import com.example.rickandmorty.databinding.FragmentLocationListBinding
 import com.example.rickandmorty.model.PagingData
-import com.example.rickandmorty.viewModel.RoomViewModel
+import com.example.rickandmorty.viewModel.LocationViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-/**
- * Фрагмент добавлен для просмотра элементов в базе данных.
- */
-class RoomFragment : Fragment() {
-    private var _binding: FragmentRoomListBinding? = null
-    private val binding
-        get() = requireNotNull(_binding) {
-            "View was destroyed"
-        }
+class LocationsFragment : Fragment() {
+    private var _binding: FragmentLocationListBinding? = null
+    private val binding get() = requireNotNull(_binding) { "View was destroyed" }
 
-    private val viewModel by viewModel<RoomViewModel>()
+    private val viewModel by viewModel<LocationViewModel>()
 
-    private val adapter = CharacterAdapter { character ->
+    private val adapter = LocationAdapter{location ->
         findNavController().navigate(
-            RoomFragmentDirections.actionRoomToDetails(character.id)
+            LocationsFragmentDirections.actionLocationsToResidents(location.id)
         )
     }
-
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        return FragmentRoomListBinding.inflate(inflater, container, false)
+        return FragmentLocationListBinding.inflate(inflater, container, false)
             .also { binding ->
                 _binding = binding
             }
@@ -54,10 +48,9 @@ class RoomFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        showCharacters()
-
         with(binding) {
-            roomToolbar.setOnMenuItemClickListener {
+            locationToolbar.setupWithNavController(findNavController())
+            locationToolbar.setOnMenuItemClickListener {
                 when (it.itemId) {
                     R.id.info_button -> {
                         showDialog()
@@ -68,13 +61,28 @@ class RoomFragment : Fragment() {
                     }
                 }
             }
-            roomToolbar.setupWithNavController(findNavController())
-            val linearLayoutManager = LinearLayoutManager(
+            val layoutManager = LinearLayoutManager(
                 view.context, LinearLayoutManager.VERTICAL, false
             )
+
+            layoutSwiperefresh.setOnRefreshListener {
+                adapter.submitList(emptyList())
+                viewModel.onRefresh {
+                    layoutSwiperefresh.isRefreshing = false
+                }
+            }
+
             recyclerView.adapter = adapter
-            recyclerView.layoutManager = linearLayoutManager
+            recyclerView.layoutManager = layoutManager
             recyclerView.addHorizontalSpaceDecoration(ITEM_SPACE)
+            recyclerView.addPaginationScrollListener(layoutManager, ITEMS_TO_LOAD) {
+                viewModel.onLoadMore()
+            }
+
+            viewModel.dataFlow
+                .onEach { it ->
+                    adapter.submitList(it.map { PagingData.Content(it) })
+                }.launchIn(viewLifecycleOwner.lifecycleScope)
         }
     }
 
@@ -83,25 +91,16 @@ class RoomFragment : Fragment() {
         _binding = null
     }
 
-    private fun showCharacters() {
-        viewModel.characterDaoFlow
-            .onEach { it ->
-                adapter.submitList(it.map { PagingData.Content(it) })
-            }.launchIn(viewLifecycleOwner.lifecycleScope)
-    }
-
     private fun showDialog() {
         AlertDialog.Builder(requireContext())
             .setTitle("Information")
-            .setMessage(
-                "This is a list of characters uploaded to a local database." +
-                        "Click on a character in the list to see more information about him"
-            )
+            .setMessage("Click on the location to see a list of characters who have been there")
             .setPositiveButton(android.R.string.ok, null)
             .show()
     }
 
     companion object {
         private const val ITEM_SPACE = 50
+        private const val ITEMS_TO_LOAD = 20
     }
 }

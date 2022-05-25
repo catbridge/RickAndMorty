@@ -7,12 +7,12 @@
     android:orientation="vertical">
 
     <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbar"
+        android:id="@+id/location_toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/purple_500"
-        app:menu="@menu/menu_list"
-        app:title="Character List"
+        app:menu="@menu/menu_info"
+        app:title="Locations"
         app:titleTextColor="@color/white" />
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -26,7 +26,7 @@
             android:layout_height="match_parent"
             android:clipToPadding="false"
             android:padding="16dp"
-            tools:itemCount="15"
-            tools:listitem="@layout/item_character" />
+            tools:itemCount="7"
+            tools:listitem="@layout/item_location" />
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 </LinearLayout>

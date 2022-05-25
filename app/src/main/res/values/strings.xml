@@ -8,4 +8,10 @@
     <string name="gender">Gender: %s</string>
     <string name="status">Status: %s</string>
     <string name="history">History</string>
+    <string name="locations">Locations</string>
+    <string name="list_of_episodes"><u>List of episodes:</u></string>
+    <string name="location_name">Name: %s</string>
+    <string name="location_type">Type: %s</string>
+    <string name="location_dimension">Dimension: %s</string>
+
 </resources>

@@ -11,5 +11,5 @@ data class Character(
     @ColumnInfo(name = "name")
     val name: String,
     @ColumnInfo(name = "image")
-    val image: String
+    val image: String,
 )

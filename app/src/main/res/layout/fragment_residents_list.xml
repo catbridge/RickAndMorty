@@ -7,13 +7,14 @@
     android:orientation="vertical">
 
     <androidx.appcompat.widget.Toolbar
-        android:id="@+id/room_toolbar"
+        android:id="@+id/toolbar_residents"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/purple_500"
         app:menu="@menu/menu_info"
-        app:title="Downloaded List"
+        app:title="Character List (Location)"
         app:titleTextColor="@color/white" />
+
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view"
@@ -21,6 +22,7 @@
         android:layout_height="match_parent"
         android:clipToPadding="false"
         android:padding="16dp"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         tools:itemCount="15"
         tools:listitem="@layout/item_character" />
 </LinearLayout>
