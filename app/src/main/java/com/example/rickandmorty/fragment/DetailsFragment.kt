@@ -50,7 +50,7 @@ class DetailsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         loadCharacterDetails()
         with(binding) {
-            toolbar.setupWithNavController(findNavController())
+            detailsToolbar.setupWithNavController(findNavController())
             recyclerViewEpisodes.addHorizontalSpaceDecoration(SPACE)
             recyclerViewEpisodes.adapter = adapter
 

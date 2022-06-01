@@ -2,13 +2,12 @@ package com.example.rickandmorty.viewModel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.rickandmorty.model.Location
-import com.example.rickandmorty.repository.RickAndMortyRepository
+import com.example.rickandmorty.domain.usecase.GetLocationsUseCase
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.*
 
 class LocationViewModel(
-    private val repository: RickAndMortyRepository,
+    private val getLocationsUseCase: GetLocationsUseCase,
 ) : ViewModel() {
 
     private val loadLocationsFlow = MutableSharedFlow<LoadState>(
@@ -20,7 +19,7 @@ class LocationViewModel(
     val dataFlow = loadLocationsFlow
         .filter { !isLoading }
         .map {
-            runCatching { repository.getLocations(currentPage) }
+            runCatching { getLocationsUseCase(currentPage) }
                 .apply { isLoading = false }
                 .fold(
                     onSuccess = {

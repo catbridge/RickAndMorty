@@ -10,9 +10,9 @@
         android:id="@+id/location_toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/purple_500"
+        android:background="@color/dark_blue_500"
         app:menu="@menu/menu_info"
-        app:title="Locations"
+        app:title="@string/locations"
         app:titleTextColor="@color/white" />
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout

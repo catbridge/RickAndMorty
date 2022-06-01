@@ -3,7 +3,8 @@ package com.example.rickandmorty.adapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.rickandmorty.R
 import com.example.rickandmorty.databinding.ItemLocationBinding
-import com.example.rickandmorty.model.Location
+import com.example.rickandmorty.domain.model.Location
+
 
 class LocationViewHolder(
     private val binding: ItemLocationBinding,

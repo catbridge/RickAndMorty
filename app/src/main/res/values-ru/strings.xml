@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="information">Информация</string>
+    <string name="home">Домой</string>
+    <string name="database">База данных</string>
+    <string name="species">Вид: %s</string>
+    <string name="gender">Пол: %s</string>
+    <string name="status">Статус: %s</string>
+    <string name="history">История</string>
+    <string name="list_of_episodes"><u>Список эпизодов:</u></string>
+    <string name="location_name">Имя: %s</string>
+    <string name="location_type">Тип: %s</string>
+    <string name="location_dimension">Измерение: %s</string>
+    <string name="locations">Места</string>
+    <string name="search">Поиск</string>
+    <string name="dark_mode">Тёмная тема</string>
+    <string name="settings">Настройки</string>
+    <string name="language">Язык</string>
+    <string name="russian">Русский</string>
+    <string name="english">Английский</string>
+    <string name="character_list">Персонажи</string>
+    <string name="character_details">Детали персонажа</string>
+    <string name="character_place">Персонажи в этом месте</string>
+    <string name="downloaded_list">Загруженный список</string>
+
+    <!--  Info messages  -->
+    <string name="info_language">Выберите язык из списка, чтобы изменить локализацию</string>
+    <string name="info_list">Нажмите на персонажа в списке, чтобы увидеть больше информации о нём</string>
+    <string name="info_location">Нажмите на место в списке, чтобы увидеть персонажей, которые там были</string>
+    <string name="info_room">Это список персонажей, загруженный в базу данных.
+        Нажмите на персонажа в списке, чтобы увидеть больше информации о нём.</string>
+    <string name="info_settings">Это меню настроек.
+        Здесь вы можете включить тёмную тему или изменить язык.</string>
+
+
+</resources>

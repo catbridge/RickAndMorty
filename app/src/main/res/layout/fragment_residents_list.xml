@@ -10,9 +10,9 @@
         android:id="@+id/toolbar_residents"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/purple_500"
+        android:background="@color/dark_blue_500"
         app:menu="@menu/menu_info"
-        app:title="Character List (Location)"
+        app:title="@string/character_place"
         app:titleTextColor="@color/white" />
 
 

@@ -14,7 +14,7 @@ import com.example.rickandmorty.R
 import com.example.rickandmorty.adapter.CharacterAdapter
 import com.example.rickandmorty.addHorizontalSpaceDecoration
 import com.example.rickandmorty.databinding.FragmentResidentsListBinding
-import com.example.rickandmorty.model.PagingData
+import com.example.rickandmorty.paging.PagingData
 import com.example.rickandmorty.viewModel.ResidentsViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -85,8 +85,8 @@ class ResidentsFragment : Fragment() {
 
     private fun showDialog() {
         AlertDialog.Builder(requireContext())
-            .setTitle("Information")
-            .setMessage("Click on a character in the list to see more information about him")
+            .setTitle(R.string.information)
+            .setMessage(R.string.info_list)
             .setPositiveButton(android.R.string.ok, null)
             .show()
     }

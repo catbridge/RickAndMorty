@@ -7,8 +7,9 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.rickandmorty.databinding.ItemLoadingBinding
 import com.example.rickandmorty.databinding.ItemLocationBinding
-import com.example.rickandmorty.model.Location
-import com.example.rickandmorty.model.PagingData
+import com.example.rickandmorty.paging.PagingData
+import com.example.rickandmorty.domain.model.Location
+
 
 class LocationAdapter(
     private val onLocationClicked: (Location) -> Unit

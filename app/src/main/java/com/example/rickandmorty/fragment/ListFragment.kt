@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.updatePadding
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -12,7 +13,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.rickandmorty.*
 import com.example.rickandmorty.adapter.CharacterAdapter
 import com.example.rickandmorty.databinding.FragmentListBinding
-import com.example.rickandmorty.model.PagingData
+import com.example.rickandmorty.extensions.applyInsetsWithAppBar
+import com.example.rickandmorty.paging.PagingData
 import com.example.rickandmorty.viewModel.ListViewModel
 import kotlinx.coroutines.flow.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -59,12 +61,6 @@ class ListFragment : Fragment() {
                         )
                         true
                     }
-                    R.id.locations -> {
-                        findNavController().navigate(
-                            ListFragmentDirections.listToLocations()
-                        )
-                        true
-                    }
                     else -> {
                         false
                     }
@@ -93,8 +89,10 @@ class ListFragment : Fragment() {
                 .onEach { it ->
                     adapter.submitList(it.map { PagingData.Content(it) })
                 }.launchIn(viewLifecycleOwner.lifecycleScope)
+
         }
     }
+
 
     override fun onDestroyView() {
         super.onDestroyView()
@@ -104,8 +102,8 @@ class ListFragment : Fragment() {
 
     private fun showDialog() {
         AlertDialog.Builder(requireContext())
-            .setTitle("Information")
-            .setMessage("Click on a character in the list to see more information about him")
+            .setTitle(R.string.information)
+            .setMessage(R.string.info_list)
             .setPositiveButton(android.R.string.ok, null)
             .show()
     }
