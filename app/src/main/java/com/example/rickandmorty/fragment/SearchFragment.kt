@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -13,38 +14,35 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.rickandmorty.R
 import com.example.rickandmorty.adapter.CharacterAdapter
 import com.example.rickandmorty.addHorizontalSpaceDecoration
-import com.example.rickandmorty.databinding.FragmentRoomListBinding
+import com.example.rickandmorty.addPaginationScrollListener
+import com.example.rickandmorty.databinding.FragmentSearchBinding
+import com.example.rickandmorty.extensions.searchQueryFlow
 import com.example.rickandmorty.paging.PagingData
-import com.example.rickandmorty.viewModel.RoomViewModel
+import com.example.rickandmorty.viewModel.SearchViewModel
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-/**
- * Фрагмент добавлен для просмотра элементов в базе данных.
- */
-class RoomFragment : Fragment() {
-    private var _binding: FragmentRoomListBinding? = null
-    private val binding
-        get() = requireNotNull(_binding) {
-            "View was destroyed"
-        }
+class SearchFragment  : Fragment() {
+    private var _binding: FragmentSearchBinding? = null
+    private val binding get() = requireNotNull(_binding) { "View was destroyed" }
 
-    private val viewModel by viewModel<RoomViewModel>()
+    private val viewModel by viewModel<SearchViewModel>()
 
     private val adapter = CharacterAdapter { character ->
         findNavController().navigate(
-            RoomFragmentDirections.actionRoomToDetails(character.id)
+            SearchFragmentDirections.toDetails(character.id)
         )
     }
-
-
+    
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        return FragmentRoomListBinding.inflate(inflater, container, false)
+        return FragmentSearchBinding.inflate(inflater, container, false)
             .also { binding ->
                 _binding = binding
             }
@@ -54,10 +52,8 @@ class RoomFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        showCharacters()
-
         with(binding) {
-            roomToolbar.setOnMenuItemClickListener {
+            searchToolbar.setOnMenuItemClickListener {
                 when (it.itemId) {
                     R.id.info_button -> {
                         showDialog()
@@ -68,37 +64,52 @@ class RoomFragment : Fragment() {
                     }
                 }
             }
-            roomToolbar.setupWithNavController(findNavController())
-            val linearLayoutManager = LinearLayoutManager(
+
+            val layoutManager = LinearLayoutManager(
                 view.context, LinearLayoutManager.VERTICAL, false
             )
+
             recyclerView.adapter = adapter
-            recyclerView.layoutManager = linearLayoutManager
+            recyclerView.layoutManager = layoutManager
             recyclerView.addHorizontalSpaceDecoration(ITEM_SPACE)
+            recyclerView.addPaginationScrollListener(layoutManager, ITEMS_TO_LOAD){
+                viewModel.onLoadMore()
+            }
+
+
+            searchToolbar.searchQueryFlow
+                .onEach { query ->
+                    viewModel.onQueryChanger(query)
+                }
+                .launchIn(viewLifecycleOwner.lifecycleScope)
+
+
+            viewModel.dataFlow
+                .onEach {
+                    adapter.submitList(it.map { PagingData.Content(it) })
+                }.launchIn(viewLifecycleOwner.lifecycleScope)
+
         }
     }
+
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
     }
 
-    private fun showCharacters() {
-        viewModel.characterDaoFlow
-            .onEach { it ->
-                adapter.submitList(it.map { PagingData.Content(it) })
-            }.launchIn(viewLifecycleOwner.lifecycleScope)
-    }
 
     private fun showDialog() {
         AlertDialog.Builder(requireContext())
             .setTitle(R.string.information)
-            .setMessage(R.string.info_room)
+            .setMessage(R.string.info_search)
             .setPositiveButton(android.R.string.ok, null)
             .show()
     }
 
     companion object {
         private const val ITEM_SPACE = 50
+        private const val ITEMS_TO_LOAD = 20
+
     }
 }

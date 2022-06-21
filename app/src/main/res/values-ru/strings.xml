@@ -21,16 +21,18 @@
     <string name="character_list">Персонажи</string>
     <string name="character_details">Детали персонажа</string>
     <string name="character_place">Персонажи в этом месте</string>
-    <string name="downloaded_list">Загруженный список</string>
+    <string name="favourite_list">Список избранного</string>
+    <string name="map">Карта</string>
+    <string name="query_search">Введите запрос</string>
 
     <!--  Info messages  -->
+    <string name="info_search">Нажмите на кнопку поиска и введите запрос, чтобы найти персонажа по имени</string>
     <string name="info_language">Выберите язык из списка, чтобы изменить локализацию</string>
     <string name="info_list">Нажмите на персонажа в списке, чтобы увидеть больше информации о нём</string>
     <string name="info_location">Нажмите на место в списке, чтобы увидеть персонажей, которые там были</string>
-    <string name="info_room">Это список персонажей, загруженный в базу данных.
+    <string name="info_room">Это список избранных персонажей, загруженный в базу данных.
         Нажмите на персонажа в списке, чтобы увидеть больше информации о нём.</string>
     <string name="info_settings">Это меню настроек.
         Здесь вы можете включить тёмную тему или изменить язык.</string>
-
 
 </resources>

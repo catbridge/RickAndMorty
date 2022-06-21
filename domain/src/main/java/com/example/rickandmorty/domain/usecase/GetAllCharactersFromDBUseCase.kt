@@ -5,7 +5,7 @@ import com.example.rickandmorty.domain.repository.CharacterLocalRepository
 
 class GetAllCharactersFromDBUseCase(private val characterLocalRepository: CharacterLocalRepository) {
 
-    suspend operator fun invoke(): List<Character>{
-        return characterLocalRepository.getAllCharacters()
+    suspend operator fun invoke(): Result<List<Character>>{
+        return runCatching { characterLocalRepository.getAllCharacters() }
     }
 }

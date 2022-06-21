@@ -17,22 +17,26 @@ class ResidentsViewModel(
 
 
     val residentsFlow: Flow<List<Character>> = flow {
-        val numbers = getNumbers()
-        if (numbers.isNotEmpty()) {
-            emit(getCharactersByIdUseCase(getNumbers()))
-        } else {
-            emit(listOf(getExtraItemUseCase()))
-        }
+        val numbers = getNumbers().map { it }
+            .getOrDefault(emptyList())
+        val extraItem = getExtraItemUseCase().map { it }
+            .getOrThrow()
+
+        getCharactersByIdUseCase(numbers).fold(
+            onSuccess = {
+                emit(it)
+            },
+            onFailure = {
+                emit(listOf(extraItem))
+            }
+        )
+
     }.shareIn(viewModelScope, started = SharingStarted.Eagerly, replay = 1)
 
 
-    private suspend fun getNumbers(): List<Int> {
-        val characterNumbers = getLocationUseCase(id).residents.map {
-            it.substringAfterLast("/")
-                .toInt()
+    private suspend fun getNumbers(): Result<List<Int>> {
+        return getLocationUseCase(id).map { it.residents.map {
+            it.substringAfterLast("/").toInt()}
         }
-        return characterNumbers
     }
-
-
 }

@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:background="@color/dark_blue_500"
         app:menu="@menu/menu_info"
-        app:title="@string/downloaded_list"
+        app:title="@string/favourite_list"
         app:titleTextColor="@color/white" />
 
     <androidx.recyclerview.widget.RecyclerView

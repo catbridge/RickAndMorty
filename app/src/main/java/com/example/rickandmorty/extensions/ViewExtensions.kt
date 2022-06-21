@@ -15,6 +15,7 @@ import kotlinx.coroutines.flow.callbackFlow
 val Toolbar.searchQueryFlow: Flow<String>
     get() = callbackFlow {
         val searchView = menu.findItem(R.id.action_search).actionView as SearchView
+        searchView.queryHint = context.getString(R.string.query_search)
 
         val queryTextListener = object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {

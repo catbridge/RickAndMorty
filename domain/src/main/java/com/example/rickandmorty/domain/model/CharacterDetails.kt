@@ -1,5 +1,8 @@
 package com.example.rickandmorty.domain.model
 
+import java.io.Serializable
+
+
 data class CharacterDetails(
     val id: Int,
     val name: String,
@@ -7,5 +10,6 @@ data class CharacterDetails(
     val species: String,
     val gender: String,
     val status: String,
-    val episode: List<String>
-)
+    val episode: List<String>,
+    var favourite: Boolean = false
+):Serializable

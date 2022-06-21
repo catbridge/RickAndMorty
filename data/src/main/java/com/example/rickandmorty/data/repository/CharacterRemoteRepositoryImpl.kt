@@ -6,6 +6,7 @@ import com.example.rickandmorty.domain.model.Character
 import com.example.rickandmorty.domain.model.CharacterDetails
 import com.example.rickandmorty.domain.model.Episode
 import com.example.rickandmorty.domain.repository.CharacterRemoteRepository
+import java.util.concurrent.Flow
 
 internal class CharacterRemoteRepositoryImpl(private val api: RickAndMortyApi) :
     CharacterRemoteRepository {
@@ -24,5 +25,9 @@ internal class CharacterRemoteRepositoryImpl(private val api: RickAndMortyApi) :
 
     override suspend fun getEpisodeList(list: List<Int>): List<Episode> {
         return api.getListOfEpisode(list).toDomainModel()
+    }
+
+    override suspend fun getCharactersByName(page: Int, name: String): List<Character> {
+        return api.getCharactersByName(page = page, name = name).results.toDomainModel()
     }
 }

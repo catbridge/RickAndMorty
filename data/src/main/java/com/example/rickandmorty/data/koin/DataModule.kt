@@ -8,6 +8,7 @@ val dataModule = module {
         databaseModule,
         repositoryModule,
         useCaseModule,
-        sharedPrefsModule
+        sharedPrefsModule,
+        locationModule
     )
 }

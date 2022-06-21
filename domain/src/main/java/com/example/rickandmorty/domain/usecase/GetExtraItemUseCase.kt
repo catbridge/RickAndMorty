@@ -5,7 +5,7 @@ import com.example.rickandmorty.domain.repository.CharacterLocalRepository
 
 class GetExtraItemUseCase(private val characterRepository: CharacterLocalRepository) {
 
-    suspend operator fun invoke(): Character {
-        return characterRepository.createExtraItem()
+    suspend operator fun invoke(): Result<Character> {
+        return runCatching { characterRepository.createExtraItem() }
     }
 }

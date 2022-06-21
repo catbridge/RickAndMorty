@@ -19,7 +19,7 @@ class LocationViewModel(
     val dataFlow = loadLocationsFlow
         .filter { !isLoading }
         .map {
-            runCatching { getLocationsUseCase(currentPage) }
+            getLocationsUseCase(currentPage)
                 .apply { isLoading = false }
                 .fold(
                     onSuccess = {

@@ -19,20 +19,28 @@
     <string name="language">Language</string>
     <string name="russian">Russian</string>
     <string name="english">English</string>
-    <string name="character_list">Character List</string>
+    <string name="character_list">Characters</string>
     <string name="character_details">Character Details</string>
     <string name="character_place">Characters in this place</string>
-    <string name="downloaded_list">Downloaded list</string>
+    <string name="favourite_list">Favourite list</string>
+    <string name="map">Map</string>
+    <string name="query_search">Enter your request</string>
 
     <!--  Info messages  -->
+    <string name="info_search">Click on the search button and enter your request to find characters by name</string>
     <string name="info_language">Select a language from the list to change the localization</string>
     <string name="info_list">Click on a character in the list to see more information about him</string>
     <string name="info_location">Click on the location to see a list of characters who have been there</string>
-    <string name="info_room">This is a list of characters uploaded to a local database.
+    <string name="info_room">This is a list of favourite characters uploaded to a local database.
         Click on a character in the list to see more information about him</string>
     <string name="info_settings">This is the settings menu.
         Here you can enable the NightMode and change the language.</string>
 
+    <!--  Map Marker Info  -->
+    <string name="latitude" translatable="false">Latitude:</string>
+    <string name="capital" translatable="false">Capital:</string>
+    <string name="longtitude" translatable="false">Longtitude:</string>
+    <string name="country" translatable="false">Country:</string>
 
 
 </resources>

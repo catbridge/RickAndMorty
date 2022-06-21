@@ -9,6 +9,7 @@ import com.example.rickandmorty.data.model.LocationListDTO
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
+import retrofit2.http.Url
 
 internal interface RickAndMortyApi {
 
@@ -46,5 +47,16 @@ internal interface RickAndMortyApi {
     suspend fun getLocation(
         @Path("id") id: Int
     ): LocationDTO
+
+    @GET("character")
+    suspend fun getCharactersByName(
+        @Query("name") name : String,
+        @Query("page") page : Int
+    ): CharacterListDTO
+
+    @GET
+    suspend fun getCountries(
+        @Url url: String
+    ): List<CountryDTO>
 
 }

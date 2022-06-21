@@ -12,8 +12,13 @@ internal val useCaseModule = module {
     factoryOf(::GetLocationUseCase)
     factoryOf(::GetLocationsUseCase)
     factoryOf(::GetExtraItemUseCase)
-    factoryOf(::InsertCharacterToDBUseCase)
     factoryOf(::GetAllCharactersFromDBUseCase)
-    factoryOf(::GetSomeCharactersFromDBUseCase)
+    factoryOf(::GetCharactersByNameUseCase)
+    factoryOf(::InsertCharacterToDBUseCase)
+    factoryOf(::DeleteCharacterFromDBUseCase)
+    factoryOf(::GetCountriesUseCase)
+    factoryOf(::GetCharacterDetailsFromDBUseCase)
+
+
 
 }

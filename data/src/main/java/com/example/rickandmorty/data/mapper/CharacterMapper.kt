@@ -11,7 +11,7 @@ internal fun CharacterDTO.toDomainModel(): Character {
     return Character(
         id = id,
         name = name,
-        image = image
+        image = image,
     )
 }
 
@@ -31,6 +31,18 @@ internal fun CharacterDetailsDTO.toDomainModel(): CharacterDetails {
     )
 }
 
+internal fun CharacterDetails.toCharacterEntity(): CharacterEntity {
+    return CharacterEntity(
+        id = id,
+        name = name,
+        image = image,
+        species = species,
+        gender = gender,
+        status = status,
+        favourite = favourite
+    )
+}
+
 internal fun CharacterEntity.toDomainModel(): Character {
     return Character(
         id = id,
@@ -39,13 +51,26 @@ internal fun CharacterEntity.toDomainModel(): Character {
     )
 }
 
-internal fun Character.toCharacterEntity(): CharacterEntity {
-    return CharacterEntity(
+internal fun CharacterEntity.toCharacterDetails(): CharacterDetails {
+    return CharacterDetails(
         id = id,
         name = name,
-        image = image
+        image = image,
+        species = species,
+        gender = gender,
+        status = status,
+        episode = emptyList(),
+        favourite = favourite
     )
 }
+
+//internal fun Character.toCharacterEntity(): CharacterEntity {
+//    return CharacterEntity(
+//        id = id,
+//        name = name,
+//        image = image
+//    )
+//}
 
 internal fun ExtraRickDTO.toDomainModel(): Character {
     return Character(
@@ -54,7 +79,3 @@ internal fun ExtraRickDTO.toDomainModel(): Character {
         image = image
     )
 }
-
-//fun List<CharacterEntity>.toDomainModel(): List<Character>{
-//    return map{it.toDomainModel()}
-//}
