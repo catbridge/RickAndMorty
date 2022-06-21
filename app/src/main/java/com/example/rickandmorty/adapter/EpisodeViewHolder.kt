@@ -1,8 +1,9 @@
 package com.example.rickandmorty.adapter
 
 import androidx.recyclerview.widget.RecyclerView
+import com.example.rickandmorty.R
 import com.example.rickandmorty.databinding.ItemEpisodeBinding
-import com.example.rickandmorty.model.Episode
+import com.example.rickandmorty.domain.model.Episode
 
 class EpisodeViewHolder(
     private val binding: ItemEpisodeBinding
@@ -10,9 +11,8 @@ class EpisodeViewHolder(
 
     fun bind(episode: Episode) {
         with(binding) {
-            episodeCode.text = episode.episode
-            episodeName.text = episode.name
-            episodeExtra.text = "-"
+            episodeText.text =
+                itemView.context.getString(R.string.dash, episode.episode, episode.name)
         }
     }
 }

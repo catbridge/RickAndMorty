@@ -2,33 +2,32 @@ package com.example.rickandmorty.viewModel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.rickandmorty.model.CharacterDetails
-import com.example.rickandmorty.model.Episode
-import com.example.rickandmorty.repository.RickAndMortyRepository
+import com.example.rickandmorty.domain.model.CharacterDetails
+import com.example.rickandmorty.domain.model.Episode
+import com.example.rickandmorty.domain.usecase.GetCharacterDetailsUseCase
+import com.example.rickandmorty.domain.usecase.GetEpisodesUseCase
 import kotlinx.coroutines.flow.*
 
 class DetailsViewModel(
-    private val repository: RickAndMortyRepository,
+    private val getCharacterDetailsUseCase: GetCharacterDetailsUseCase,
+    private val getEpisodesUseCase: GetEpisodesUseCase,
     private val id: Int
 ) : ViewModel() {
 
     val characterDetailsFlow: Flow<CharacterDetails> = flow {
-        emit(repository.getCharacterDetails(id))
+        emit(getCharacterDetailsUseCase(id))
     }.shareIn(viewModelScope, started = SharingStarted.Eagerly, replay = 1)
 
 
     val episodesFlow: Flow<List<Episode>> = flow {
-        emit(repository.getEpisodeList(getNumbers()))
+        val characterDetails = getCharacterDetailsUseCase(id)
+        emit(getEpisodesUseCase(characterDetails.episode.map {
+            it.substringAfterLast("/").toInt()
+        }))
     }.shareIn(viewModelScope, started = SharingStarted.Eagerly, replay = 1)
 
-    private suspend fun getNumbers(): List<Int> {
-        val episodeNumbers = repository.getCharacterDetails(id).episode.map {
-            it.substringAfterLast("/")
-                .toInt()
-        }
-        return episodeNumbers
-    }
 }
+
 
 
 

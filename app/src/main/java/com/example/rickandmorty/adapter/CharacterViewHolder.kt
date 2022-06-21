@@ -5,7 +5,8 @@ import coil.load
 import coil.size.Scale
 import coil.size.ViewSizeResolver
 import com.example.rickandmorty.databinding.ItemCharacterBinding
-import com.example.rickandmorty.model.Character
+import com.example.rickandmorty.domain.model.Character
+
 
 class CharacterViewHolder(
     private val binding: ItemCharacterBinding,

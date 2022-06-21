@@ -14,10 +14,11 @@
         android:icon="@android:drawable/ic_menu_recent_history"
         app:showAsAction="ifRoom"
         android:title="@string/history" />
-
     <item
-        android:id="@+id/locations"
-        android:icon="@android:drawable/ic_menu_mapmode"
-        app:showAsAction="ifRoom"
-        android:title="@string/locations" />
+        android:id="@+id/action_search"
+        android:icon="@android:drawable/ic_menu_search"
+        app:showAsAction="always|collapseActionView"
+        app:actionViewClass="androidx.appcompat.widget.SearchView"
+        android:title="@string/search"
+        />
 </menu>

@@ -7,8 +7,8 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.rickandmorty.databinding.ItemCharacterBinding
 import com.example.rickandmorty.databinding.ItemLoadingBinding
-import com.example.rickandmorty.model.Character
-import com.example.rickandmorty.model.PagingData
+import com.example.rickandmorty.paging.PagingData
+import com.example.rickandmorty.domain.model.Character
 
 class CharacterAdapter(
     private val onCharacterClicked: (Character) -> Unit

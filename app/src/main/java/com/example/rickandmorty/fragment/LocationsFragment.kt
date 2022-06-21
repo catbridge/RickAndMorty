@@ -8,14 +8,13 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.ui.setupWithNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.rickandmorty.R
 import com.example.rickandmorty.adapter.LocationAdapter
 import com.example.rickandmorty.addHorizontalSpaceDecoration
 import com.example.rickandmorty.addPaginationScrollListener
 import com.example.rickandmorty.databinding.FragmentLocationListBinding
-import com.example.rickandmorty.model.PagingData
+import com.example.rickandmorty.paging.PagingData
 import com.example.rickandmorty.viewModel.LocationViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -27,7 +26,7 @@ class LocationsFragment : Fragment() {
 
     private val viewModel by viewModel<LocationViewModel>()
 
-    private val adapter = LocationAdapter{location ->
+    private val adapter = LocationAdapter { location ->
         findNavController().navigate(
             LocationsFragmentDirections.actionLocationsToResidents(location.id)
         )
@@ -49,7 +48,6 @@ class LocationsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         with(binding) {
-            locationToolbar.setupWithNavController(findNavController())
             locationToolbar.setOnMenuItemClickListener {
                 when (it.itemId) {
                     R.id.info_button -> {
@@ -61,9 +59,7 @@ class LocationsFragment : Fragment() {
                     }
                 }
             }
-            val layoutManager = LinearLayoutManager(
-                view.context, LinearLayoutManager.VERTICAL, false
-            )
+            val layoutManager = LinearLayoutManager(view.context)
 
             layoutSwiperefresh.setOnRefreshListener {
                 adapter.submitList(emptyList())
@@ -93,8 +89,8 @@ class LocationsFragment : Fragment() {
 
     private fun showDialog() {
         AlertDialog.Builder(requireContext())
-            .setTitle("Information")
-            .setMessage("Click on the location to see a list of characters who have been there")
+            .setTitle(R.string.information)
+            .setMessage(R.string.info_location)
             .setPositiveButton(android.R.string.ok, null)
             .show()
     }

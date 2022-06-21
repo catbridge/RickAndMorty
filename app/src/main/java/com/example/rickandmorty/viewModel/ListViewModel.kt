@@ -2,30 +2,37 @@ package com.example.rickandmorty.viewModel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.rickandmorty.repository.RickAndMortyRepository
-import com.example.rickandmorty.room.CharacterDao
+import com.example.rickandmorty.domain.model.Character
+import com.example.rickandmorty.domain.repository.CharacterLocalRepository
+import com.example.rickandmorty.domain.usecase.GetAllCharactersFromDBUseCase
+import com.example.rickandmorty.domain.usecase.GetCharactersUseCase
+import com.example.rickandmorty.domain.usecase.GetSomeCharactersFromDBUseCase
+import com.example.rickandmorty.domain.usecase.InsertCharacterToDBUseCase
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.*
 
 class ListViewModel(
-    private val characterRepository: RickAndMortyRepository,
-    private val characterDao: CharacterDao
+    private val getCharactersUseCase: GetCharactersUseCase,
+    private val insertCharacterToDBUseCase: InsertCharacterToDBUseCase,
+    private val getSomeCharactersFromDBUseCase: GetSomeCharactersFromDBUseCase
 ) : ViewModel() {
 
     private val loadCharactersFlow = MutableSharedFlow<LoadState>(
         replay = 1, onBufferOverflow = BufferOverflow.DROP_OLDEST
     )
+
+
     private var isLoading = false
     private var currentPage = 1
 
     val dataFlow = loadCharactersFlow
         .filter { !isLoading }
         .map {
-            runCatching { characterRepository.getAllCharacters(currentPage) }
+            runCatching { getCharactersUseCase(currentPage) }
                 .apply { isLoading = false }
                 .fold(
                     onSuccess = {
-                        characterDao.insertList(it)
+                        insertCharacterToDBUseCase(it)
                         currentPage++
                         it
                     },
@@ -37,8 +44,9 @@ class ListViewModel(
         .onEach { isLoading }
         .runningReduce { accumulator, value -> accumulator + value }
         .onStart {
-            if (characterDao.getAllCharacters().isNotEmpty()) {
-                emit((characterDao.getCharacters(PAGE_SIZE, 0)))
+            val list = getSomeCharactersFromDBUseCase()
+            if (list.isNotEmpty()) {
+                emit(getSomeCharactersFromDBUseCase())
             } else {
                 onRefresh()
             }
@@ -48,22 +56,17 @@ class ListViewModel(
             replay = 1
         )
 
-
     fun onLoadMore() {
         loadCharactersFlow.tryEmit(LoadState.LOAD_MORE)
     }
 
     fun onRefresh(onLoadingFinished: () -> Unit = {}) {
-        onLoadingFinished()
         loadCharactersFlow.tryEmit(LoadState.REFRESH)
+        onLoadingFinished()
     }
 
     enum class LoadState {
         LOAD_MORE, REFRESH
-    }
-
-    companion object {
-        private const val PAGE_SIZE = 20
     }
 
 }

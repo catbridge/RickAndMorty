@@ -14,7 +14,7 @@ import com.example.rickandmorty.R
 import com.example.rickandmorty.adapter.CharacterAdapter
 import com.example.rickandmorty.addHorizontalSpaceDecoration
 import com.example.rickandmorty.databinding.FragmentRoomListBinding
-import com.example.rickandmorty.model.PagingData
+import com.example.rickandmorty.paging.PagingData
 import com.example.rickandmorty.viewModel.RoomViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -92,11 +92,8 @@ class RoomFragment : Fragment() {
 
     private fun showDialog() {
         AlertDialog.Builder(requireContext())
-            .setTitle("Information")
-            .setMessage(
-                "This is a list of characters uploaded to a local database." +
-                        "Click on a character in the list to see more information about him"
-            )
+            .setTitle(R.string.information)
+            .setMessage(R.string.info_room)
             .setPositiveButton(android.R.string.ok, null)
             .show()
     }
