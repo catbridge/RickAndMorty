@@ -3,6 +3,7 @@ package com.example.rickandmorty.viewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.rickandmorty.domain.model.Character
+import com.example.rickandmorty.domain.model.LceState
 import com.example.rickandmorty.domain.usecase.GetCharactersByIdUseCase
 import com.example.rickandmorty.domain.usecase.GetExtraItemUseCase
 import com.example.rickandmorty.domain.usecase.GetLocationUseCase
@@ -16,27 +17,23 @@ class ResidentsViewModel(
 ) : ViewModel() {
 
 
-    val residentsFlow: Flow<List<Character>> = flow {
-        val numbers = getNumbers().map { it }
-            .getOrDefault(emptyList())
-        val extraItem = getExtraItemUseCase().map { it }
+    val residentsFlow: Flow <LceState<List<Character>>> = flow {
+        val numbers = getLocationUseCase(id).map { it.residents.map { string ->
+            string.substringAfterLast("/").toInt()}
+        }.getOrDefault(emptyList())
+
+        val extraItem = getExtraItemUseCase()
             .getOrThrow()
 
-        getCharactersByIdUseCase(numbers).fold(
+        val state = getCharactersByIdUseCase(numbers).fold(
             onSuccess = {
-                emit(it)
+                LceState.Content(it)
             },
             onFailure = {
-                emit(listOf(extraItem))
+                LceState.Content(listOf(extraItem))
             }
         )
+        emit(state)
+    }.stateIn(viewModelScope, SharingStarted.Eagerly, initialValue = LceState.Loading)
 
-    }.shareIn(viewModelScope, started = SharingStarted.Eagerly, replay = 1)
-
-
-    private suspend fun getNumbers(): Result<List<Int>> {
-        return getLocationUseCase(id).map { it.residents.map {
-            it.substringAfterLast("/").toInt()}
-        }
-    }
 }

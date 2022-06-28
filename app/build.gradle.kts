@@ -15,8 +15,9 @@ android {
         versionCode = 1
         versionName = "1.0"
 
-        val mapKey : String by project
-        manifestPlaceholders ["googleMapKey"] = mapKey
+        val googleMapKey:String by project
+
+        manifestPlaceholders["googleMapKey"]  = googleMapKey
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }

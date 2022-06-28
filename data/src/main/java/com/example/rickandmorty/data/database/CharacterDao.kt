@@ -6,9 +6,6 @@ import com.example.rickandmorty.data.model.CharacterEntity
 @Dao
 internal interface CharacterDao {
 
-    @Query("SELECT * FROM characterentity LIMIT :limit OFFSET :offset")
-    suspend fun getCharacters(limit: Int, offset: Int): List<CharacterEntity>
-
     @Query("SELECT * FROM characterentity")
     suspend fun getAllCharacters(): List<CharacterEntity>
 

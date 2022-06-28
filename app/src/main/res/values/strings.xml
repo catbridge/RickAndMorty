@@ -35,6 +35,9 @@
         Click on a character in the list to see more information about him</string>
     <string name="info_settings">This is the settings menu.
         Here you can enable the NightMode and change the language.</string>
+    <string name="toast_favourite">Favourite List has been updated</string>
+    <string name="toast_error_query">Nothing was found for this query</string>
+
 
     <!--  Map Marker Info  -->
     <string name="latitude" translatable="false">Latitude:</string>

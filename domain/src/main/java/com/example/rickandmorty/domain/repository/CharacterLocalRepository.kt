@@ -4,7 +4,6 @@ import com.example.rickandmorty.domain.model.Character
 import com.example.rickandmorty.domain.model.CharacterDetails
 
 interface CharacterLocalRepository {
-    suspend fun getCharacters(limit: Int, offset: Int): List<Character>
 
     suspend fun getCharacterDetails(id: Int): CharacterDetails
 

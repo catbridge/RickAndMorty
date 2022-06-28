@@ -12,11 +12,6 @@ import com.example.rickandmorty.domain.repository.CharacterLocalRepository
 internal class CharacterLocalRepositoryImpl(private val characterDao: CharacterDao) :
     CharacterLocalRepository {
 
-
-    override suspend fun getCharacters(limit: Int, offset: Int): List<Character> {
-        return characterDao.getCharacters(limit, offset).map { it.toDomainModel() }
-    }
-
     override suspend fun getAllCharacters(): List<Character> {
         return characterDao.getAllCharacters().map { it.toDomainModel() }
     }
@@ -28,7 +23,6 @@ internal class CharacterLocalRepositoryImpl(private val characterDao: CharacterD
     override suspend fun insert(character: CharacterDetails) {
         characterDao.insert(character.toCharacterEntity())
     }
-
 
     override suspend fun delete(character: CharacterDetails) {
         characterDao.delete(character.toCharacterEntity())

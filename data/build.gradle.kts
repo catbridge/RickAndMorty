@@ -22,6 +22,9 @@ android {
         val rickName: String by project
         buildConfigField("String", "RICK_NAME", rickName)
 
+        val mapUrl: String by project
+        buildConfigField("String", "MAP_URL", mapUrl)
+
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
     }

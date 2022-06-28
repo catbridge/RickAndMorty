@@ -54,9 +54,9 @@ internal interface RickAndMortyApi {
         @Query("page") page : Int
     ): CharacterListDTO
 
-    @GET
-    suspend fun getCountries(
-        @Url url: String
-    ): List<CountryDTO>
+//    @GET
+//    suspend fun getCountries(
+//        @Url url: String
+//    ): List<CountryDTO>
 
 }

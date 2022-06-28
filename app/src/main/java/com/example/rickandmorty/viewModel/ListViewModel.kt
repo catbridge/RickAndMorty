@@ -2,6 +2,8 @@ package com.example.rickandmorty.viewModel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.rickandmorty.domain.model.Character
+import com.example.rickandmorty.domain.model.LceState
 import com.example.rickandmorty.domain.usecase.GetCharactersUseCase
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.*
@@ -10,51 +12,71 @@ class ListViewModel(
     private val getCharactersUseCase: GetCharactersUseCase
 ) : ViewModel() {
 
-    private val loadCharactersFlow = MutableSharedFlow<LoadState>(
+    private val _lceFlow = MutableStateFlow<LceState<List<Character>>>(LceState.Loading)
+    val lceFlow: Flow<LceState<List<Character>>> = _lceFlow.asStateFlow()
+
+    private val loadMoreFlow = MutableSharedFlow<Unit>(
         replay = 1, onBufferOverflow = BufferOverflow.DROP_OLDEST
     )
-
 
     private var isLoading = false
     private var currentPage = 1
 
-    val dataFlow = loadCharactersFlow
-        .filter { !isLoading }
-        .map {
+    val dataFlow = loadMoreFlow
+        .filter { !isLoading}
+        .mapLatest {
+            isLoading = true
             getCharactersUseCase(currentPage)
-                .apply { isLoading = false }
+                .onSuccess { currentPage++ }
                 .fold(
                     onSuccess = {
-                        currentPage++
-                        it
+                        LceState.Content(it)
                     },
                     onFailure = {
-                        emptyList()
+                        if(currentPage == 1){
+                            LceState.Error(it)
+                        }else{
+                            LceState.Content(emptyList())
+                        }
                     }
                 )
         }
-        .onEach { isLoading }
-        .runningReduce { accumulator, value -> accumulator + value }
-        .onStart {
-            onRefresh()
-        }.shareIn(
-            scope = viewModelScope,
-            started = SharingStarted.Eagerly,
-            replay = 1
+        .onEach { isLoading = false }
+        .runningReduce { accumulator, value ->
+            if (currentPage == 1 && value is LceState.Error) {
+                value
+            } else {
+                when (accumulator) {
+                    is LceState.Content -> {
+                        LceState.Content(
+                            accumulator.value + (value as? LceState.Content)?.value.orEmpty()
+                        )
+                    }
+                    is LceState.Error -> {
+                        (value as? LceState.Content) ?: accumulator
+                    }
+                    LceState.Loading -> accumulator
+                }
+            }
+        }.stateIn(
+            viewModelScope,
+            SharingStarted.Eagerly,
+            LceState.Loading
         )
+
+    init {
+        onLoadMore()
+    }
 
 
     fun onLoadMore() {
-        loadCharactersFlow.tryEmit(LoadState.LOAD_MORE)
+        loadMoreFlow.tryEmit(Unit)
     }
 
     fun onRefresh(onLoadingFinished: () -> Unit = {}) {
-        loadCharactersFlow.tryEmit(LoadState.REFRESH)
+        currentPage = 1
+        loadMoreFlow.tryEmit(Unit)
         onLoadingFinished()
-    }
-
-    enum class LoadState {
-        LOAD_MORE, REFRESH
     }
 
 }
