@@ -2,7 +2,7 @@ ____
 # Rick And Morty Android Application
 Application to test the Rick&Morty API and test different libraires.
 # Screens 📱
-The app currently consists of 8 screens:
+The app currently consists of 8 screens. On each screen there is a button with a dialog box displaying information:
 * A List of character screen, in which the user can see a visualuzed list of Rick&Morty chracters taken from the API and select one.
 * A character details screen, where after selecting one character from the list, the user can visualize detailed information about the character, for example, his name, genre and a list of episodes in which this character appeared.
 * A list of favourite characters
@@ -11,7 +11,6 @@ The app currently consists of 8 screens:
 * Search Screen, where the user can search hcaracter by name
 * Settings Screen, where the user can set up Dark and Light themes or change Localization.
 * Map screen. This is extra screen to test google map and bottom sheets. There a user can see markers for each country and see details by clicking on marker.
-- On each screen there is a button with a dialog box displaying information
 # Libraries 🛠️
 * [Flow](https://developer.android.com/kotlin/flow)
 * [Koin](https://insert-koin.io/)
