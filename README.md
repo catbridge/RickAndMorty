@@ -1,4 +1,3 @@
-____
 # Rick And Morty Android Application
 Application to test the Rick&Morty API and test different libraires.
 # Screens 📱
