@@ -6,8 +6,9 @@ import com.example.rickandmorty.domain.model.Language
 import com.example.rickandmorty.domain.model.NightMode
 import com.example.rickandmorty.domain.service.LanguageService
 import com.example.rickandmorty.domain.service.NightModeService
+import com.example.rickandmorty.domain.service.PrefsService
 
-class PreferenceServiceImpl (context: Context) : NightModeService, LanguageService {
+internal class PreferenceServiceImpl (context: Context) : PrefsService {
 
     private val sharedPrefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
 

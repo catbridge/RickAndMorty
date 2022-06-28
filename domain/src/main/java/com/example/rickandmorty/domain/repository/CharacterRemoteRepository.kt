@@ -13,4 +13,6 @@ interface CharacterRemoteRepository {
     suspend fun getCharacterDetails(id: Int): CharacterDetails
 
     suspend fun getEpisodeList(list: List<Int>): List<Episode>
+
+    suspend fun getCharactersByName(page : Int, name: String): List<Character>
 }

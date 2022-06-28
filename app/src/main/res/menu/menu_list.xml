@@ -11,14 +11,7 @@
 
     <item
         android:id="@+id/history"
-        android:icon="@android:drawable/ic_menu_recent_history"
+        android:icon="@android:drawable/btn_star"
         app:showAsAction="ifRoom"
-        android:title="@string/history" />
-    <item
-        android:id="@+id/action_search"
-        android:icon="@android:drawable/ic_menu_search"
-        app:showAsAction="always|collapseActionView"
-        app:actionViewClass="androidx.appcompat.widget.SearchView"
-        android:title="@string/search"
-        />
+        android:title="@string/favourite_list" />
 </menu>

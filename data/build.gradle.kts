@@ -62,6 +62,9 @@ dependencies {
     //Retrofit
     implementation(libs.bundles.retrofit2)
 
+    // Google Maps
+    implementation (libs.bundles.google.maps)
+
     testImplementation(libs.junit)
     androidTestImplementation (libs.androidx.test.ext)
     androidTestImplementation (libs.androidx.test.espresso)

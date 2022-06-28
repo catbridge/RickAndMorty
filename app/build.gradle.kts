@@ -15,6 +15,9 @@ android {
         versionCode = 1
         versionName = "1.0"
 
+        val mapKey : String by project
+        manifestPlaceholders ["googleMapKey"] = mapKey
+
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -77,6 +80,9 @@ dependencies {
 
     //Koin
     implementation(libs.io.koin)
+
+    // Google Maps
+    implementation (libs.bundles.google.maps)
 
     //Circle ImageView
     implementation(libs.circleImageView)

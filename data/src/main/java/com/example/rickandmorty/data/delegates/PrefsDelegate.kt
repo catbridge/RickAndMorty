@@ -4,7 +4,7 @@ import android.content.SharedPreferences
 import androidx.core.content.edit
 import kotlin.reflect.KProperty
 
-class PrefsDelegate<T>(
+internal class PrefsDelegate<T>(
     private val sharedPrefs: SharedPreferences,
     private val getValue: SharedPreferences.() -> T,
     private val setValue: SharedPreferences.Editor.(T) -> Unit

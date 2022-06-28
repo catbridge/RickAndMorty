@@ -9,9 +9,9 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.rickandmorty.R
-import com.example.rickandmorty.data.service.PreferenceServiceImpl
 import com.example.rickandmorty.databinding.FragmentSettingsBinding
 import com.example.rickandmorty.domain.model.NightMode
+import com.example.rickandmorty.domain.service.PrefsService
 import org.koin.android.ext.android.inject
 
 class SettingsFragment : Fragment() {
@@ -19,7 +19,7 @@ class SettingsFragment : Fragment() {
     private var _binding: FragmentSettingsBinding? = null
     private val binding get() = requireNotNull(_binding)
 
-    private val prefsManager: PreferenceServiceImpl by inject()
+    private val prefsManager: PrefsService by inject()
 
     override fun onCreateView(
         inflater: LayoutInflater,

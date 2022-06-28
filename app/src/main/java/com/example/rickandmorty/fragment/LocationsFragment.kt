@@ -77,7 +77,9 @@ class LocationsFragment : Fragment() {
 
             viewModel.dataFlow
                 .onEach { it ->
-                    adapter.submitList(it.map { PagingData.Content(it) })
+                    adapter.submitList(it.map { PagingData.Content(it)} + PagingData.Loading)
+                    if(adapter.currentList.last() == PagingData.Loading)
+                        adapter.submitList(adapter.currentList.dropLast(1))
                 }.launchIn(viewLifecycleOwner.lifecycleScope)
         }
     }

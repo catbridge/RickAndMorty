@@ -3,13 +3,27 @@
     <item
         android:id="@+id/list"
         android:enabled="true"
-        android:icon="@android:drawable/ic_menu_gallery"
+        android:icon="@drawable/ic_characters"
         android:title="@string/character_list" />
+
+
+    <item
+        android:id="@+id/searchFragment"
+        android:enabled="true"
+        android:icon="@android:drawable/ic_menu_search"
+        android:title="@string/search" />
+
     <item
         android:id="@+id/locations"
         android:enabled="true"
         android:icon="@android:drawable/ic_menu_mapmode"
         android:title="@string/locations" />
+    <item
+        android:id="@+id/map"
+        android:enabled="true"
+        android:icon="@android:drawable/ic_dialog_map"
+        android:title="@string/map" />
+
     <item
         android:id="@+id/settings"
         android:enabled="true"
