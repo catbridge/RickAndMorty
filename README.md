@@ -15,7 +15,7 @@ The app currently consists of 8 screens:
 * [Flow](https://developer.android.com/kotlin/flow)
 * [Koin](https://insert-koin.io/)
 * [Coil](https://coil-kt.github.io/coil/)
-* [Android Jetpack]()
+* [Android Jetpack](https://developer.android.com/jetpack)
     * [Navigation](https://developer.android.com/guide/navigation/navigation-getting-started)
     * [View Binding](https://developer.android.com/topic/libraries/view-binding)
     * [Viewmodel](https://developer.android.com/topic/libraries/architecture/viewmodel)
