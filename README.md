@@ -1,3 +1,4 @@
+____
 # Rick And Morty Android Application
 Application to test the Rick&Morty API and test different libraires.
 # Screens 📱
@@ -28,6 +29,7 @@ The app currently consists of 8 screens:
 # Structure 🎨
 * [App](https://github.com/catbridge/RickAndMorty/tree/master/app/src/main)
 * [Data](https://github.com/catbridge/RickAndMorty/tree/master/data/src/main)
-* [Domain](https://github.com/catbridge/RickAndMorty/tree/master/domain) 
+* [Domain](https://github.com/catbridge/RickAndMorty/tree/master/domain)
 # Screenshots :camera:
-![List of Characters](https://ia.wampi.ru/2022/06/28/Character-List20cd8ba3f3fa51ce.png) ![Details](https://ie.wampi.ru/2022/06/28/Details627fc890f0c49a51.png) ![Locations](https://ie.wampi.ru/2022/06/28/Locations-Screenf000455776dc8fee.png) ![Search](https://ie.wampi.ru/2022/06/28/Search-Screen1404e32688f96784.png)
+![List of Characters](https://ia.wampi.ru/2022/06/28/Character-List20cd8ba3f3fa51ce.png) ![Details](https://ie.wampi.ru/2022/06/28/Details627fc890f0c49a51.png) ![Locations](https://ie.wampi.ru/2022/06/28/Locations-Screenf000455776dc8fee.png)
+____
