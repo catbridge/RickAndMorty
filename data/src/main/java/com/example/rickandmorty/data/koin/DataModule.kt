@@ -9,6 +9,7 @@ val dataModule = module {
         repositoryModule,
         useCaseModule,
         sharedPrefsModule,
-        locationModule
+        locationModule,
+        mapNetworkModule
     )
 }

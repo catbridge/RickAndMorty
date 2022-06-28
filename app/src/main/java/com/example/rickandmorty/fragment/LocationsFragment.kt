@@ -5,6 +5,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -14,6 +16,7 @@ import com.example.rickandmorty.adapter.LocationAdapter
 import com.example.rickandmorty.addHorizontalSpaceDecoration
 import com.example.rickandmorty.addPaginationScrollListener
 import com.example.rickandmorty.databinding.FragmentLocationListBinding
+import com.example.rickandmorty.domain.model.LceState
 import com.example.rickandmorty.paging.PagingData
 import com.example.rickandmorty.viewModel.LocationViewModel
 import kotlinx.coroutines.flow.launchIn
@@ -76,10 +79,19 @@ class LocationsFragment : Fragment() {
             }
 
             viewModel.dataFlow
-                .onEach { it ->
-                    adapter.submitList(it.map { PagingData.Content(it)} + PagingData.Loading)
-                    if(adapter.currentList.last() == PagingData.Loading)
-                        adapter.submitList(adapter.currentList.dropLast(1))
+                .onEach { lce ->
+                    when(lce){
+                        is LceState.Content -> {
+                            isVisibleProgressBar(false)
+                            adapter.submitList(lce.value.map { PagingData.Content(it)})
+                        }
+                        is LceState.Error -> {
+                            isVisibleProgressBar(false)
+                            Toast.makeText(
+                                requireContext(), lce.throwable.message ?: "", Toast.LENGTH_SHORT).show()
+                        }
+                        LceState.Loading -> isVisibleProgressBar(true)
+                    }
                 }.launchIn(viewLifecycleOwner.lifecycleScope)
         }
     }
@@ -87,6 +99,10 @@ class LocationsFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    private fun isVisibleProgressBar(visible:Boolean) {
+        binding.progressBar.isVisible = visible
     }
 
     private fun showDialog() {

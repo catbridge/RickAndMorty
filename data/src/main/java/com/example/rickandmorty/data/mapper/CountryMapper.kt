@@ -1,8 +1,6 @@
 package com.example.rickandmorty.data.mapper
 
-import com.example.rickandmorty.data.model.CharacterDTO
 import com.example.rickandmorty.data.model.CountryDTO
-import com.example.rickandmorty.domain.model.Character
 import com.example.rickandmorty.domain.model.Country
 
 internal fun CountryDTO.toDomainModel(): Country {

@@ -5,7 +5,9 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.appcompat.widget.SearchView
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -16,6 +18,7 @@ import com.example.rickandmorty.adapter.CharacterAdapter
 import com.example.rickandmorty.addHorizontalSpaceDecoration
 import com.example.rickandmorty.addPaginationScrollListener
 import com.example.rickandmorty.databinding.FragmentSearchBinding
+import com.example.rickandmorty.domain.model.LceState
 import com.example.rickandmorty.extensions.searchQueryFlow
 import com.example.rickandmorty.paging.PagingData
 import com.example.rickandmorty.viewModel.SearchViewModel
@@ -85,8 +88,19 @@ class SearchFragment  : Fragment() {
 
 
             viewModel.dataFlow
-                .onEach {
-                    adapter.submitList(it.map { PagingData.Content(it) })
+                .onEach { lce ->
+                    when(lce){
+                        is LceState.Content ->{
+                            isVisibleProgressBar(false)
+                            adapter.submitList(lce.value.map { PagingData.Content(it) })
+                        }
+                        is LceState.Error ->{
+                            isVisibleProgressBar(false)
+                            Toast.makeText(
+                                requireContext(), R.string.toast_error_query, Toast.LENGTH_SHORT).show()
+                        }
+                        LceState.Loading -> isVisibleProgressBar(true)
+                    }
                 }.launchIn(viewLifecycleOwner.lifecycleScope)
 
         }
@@ -98,6 +112,9 @@ class SearchFragment  : Fragment() {
         _binding = null
     }
 
+    private fun isVisibleProgressBar(visible:Boolean) {
+        binding.progressBar.isVisible = visible
+    }
 
     private fun showDialog() {
         AlertDialog.Builder(requireContext())

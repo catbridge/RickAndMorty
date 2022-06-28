@@ -9,7 +9,7 @@ internal val databaseModule = module {
         Room.databaseBuilder(
             get(),
             CharacterDatabase::class.java,
-            "favouriteCharacters.db"
+            "favouriteList.db"
         )
             .build()
     }

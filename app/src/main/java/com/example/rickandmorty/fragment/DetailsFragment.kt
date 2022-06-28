@@ -4,6 +4,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -14,17 +16,12 @@ import com.example.rickandmorty.R
 import com.example.rickandmorty.adapter.EpisodeAdapter
 import com.example.rickandmorty.addHorizontalSpaceDecoration
 import com.example.rickandmorty.databinding.FragmentDetailsBinding
-import com.example.rickandmorty.domain.model.CharacterDetails
+import com.example.rickandmorty.domain.model.LceState
 import com.example.rickandmorty.viewModel.DetailsViewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
-import kotlin.properties.Delegates
 
 class DetailsFragment : Fragment() {
     private var _binding: FragmentDetailsBinding? = null
@@ -51,16 +48,66 @@ class DetailsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        loadCharacterDetails()
-        changeStatus()
-
         with(binding) {
             detailsToolbar.setupWithNavController(findNavController())
             recyclerViewEpisodes.addHorizontalSpaceDecoration(SPACE)
             recyclerViewEpisodes.adapter = adapter
 
+            viewModel.characterDetailsFlow
+                .onEach { lce ->
+                    when (lce) {
+                        is LceState.Content -> {
+                            isVisibleDetailsProgressBar(false)
+                            val characterDetails = lce.value
+                            characterImg.load(characterDetails.image)
+                            characterName.text = characterDetails.name
+                            characterSpecies.text =
+                                requireContext().getString(
+                                    R.string.species,
+                                    characterDetails.species
+                                )
+                            characterGender.text =
+                                requireContext().getString(R.string.gender, characterDetails.gender)
+                            characterStatus.text =
+                                requireContext().getString(R.string.status, characterDetails.status)
 
+                            if (characterDetails.isFavourite) {
+                                imgFavorites.setImageResource(android.R.drawable.star_big_on)
+                            } else {
+                                imgFavorites.setImageResource(android.R.drawable.star_off)
+                            }
+                        }
+                        is LceState.Error -> {
+                            isVisibleDetailsProgressBar(false)
+                            Toast.makeText(requireContext(), lce.throwable.message,
+                                Toast.LENGTH_SHORT).show()
+                        }
+                        LceState.Loading -> isVisibleDetailsProgressBar(true)
+                    }
+                }.launchIn(viewLifecycleOwner.lifecycleScope)
+
+            imgFavorites.setOnClickListener {
+                viewModel.onFavouriteClicked()
+                Toast.makeText(requireContext(), R.string.toast_favourite,
+                    Toast.LENGTH_SHORT).show()
+            }
+
+            viewModel.episodesFlow
+                .onEach { lce ->
+                    when (lce) {
+                        is LceState.Content ->{
+                            isVisibleEpisodesProgressBar(false)
+                            val episodes = lce.value
+                            adapter.submitList(episodes)
+                        }
+                        is LceState.Error ->{
+                            isVisibleEpisodesProgressBar(false)
+                            Toast.makeText(
+                                requireContext(), lce.throwable.message ?: "", Toast.LENGTH_SHORT).show()
+                        }
+                        LceState.Loading -> isVisibleEpisodesProgressBar(true)
+                    }
+                }.launchIn(viewLifecycleOwner.lifecycleScope)
         }
     }
 
@@ -69,54 +116,12 @@ class DetailsFragment : Fragment() {
         _binding = null
     }
 
-    private fun loadCharacterDetails() {
-        with(binding) {
-            viewModel.characterDetailsFlow
-                .onEach { characterDetails ->
-                        characterImg.load(characterDetails.image)
-                        characterName.text = characterDetails.name
-                        characterSpecies.text =
-                            requireContext().getString(R.string.species, characterDetails.species)
-                        characterGender.text =
-                            requireContext().getString(R.string.gender, characterDetails.gender)
-                        characterStatus.text =
-                            requireContext().getString(R.string.status, characterDetails.status)
-
-                        if (characterDetails.favourite){
-                            imgFavorites.setImageResource(android.R.drawable.star_big_on)
-                        }else{
-                            imgFavorites.setImageResource(android.R.drawable.star_off)
-                        }
-                    }.launchIn(viewLifecycleOwner.lifecycleScope)
-                }
-
-            viewModel.episodesFlow
-                .onEach { episodes ->
-                    adapter.submitList(episodes)
-                }.launchIn(viewLifecycleOwner.lifecycleScope)
-
+    private fun isVisibleEpisodesProgressBar(visible:Boolean) {
+        binding.progressBarEpisodes.isVisible = visible
     }
 
-    private fun changeStatus(){
-        with(binding) {
-            viewModel.characterDetailsFlow.onEach { characterDetails ->
-                imgFavorites.setOnClickListener {
-                    if (characterDetails.favourite) {
-                        imgFavorites.setImageResource(android.R.drawable.star_off)
-                        characterDetails.favourite = false
-                        viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
-                            viewModel.deleteCharacter(characterDetails)
-                        }
-                    } else {
-                        imgFavorites.setImageResource(android.R.drawable.star_big_on)
-                        characterDetails.favourite = true
-                        viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
-                            viewModel.insertCharacter(characterDetails)
-                        }
-                    }
-                }
-            }.launchIn(viewLifecycleOwner.lifecycleScope)
-        }
+    private fun isVisibleDetailsProgressBar(visible:Boolean) {
+        binding.progressBarEpisodes.isVisible = visible
     }
 
 

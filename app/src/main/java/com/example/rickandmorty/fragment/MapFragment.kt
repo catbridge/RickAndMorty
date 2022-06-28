@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
@@ -16,6 +17,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.example.rickandmorty.data.service.LocationService
 import com.example.rickandmorty.databinding.FragmentMapBinding
+import com.example.rickandmorty.domain.model.LceState
 import com.example.rickandmorty.viewModel.MapViewModel
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -100,20 +102,31 @@ class MapFragment : Fragment() {
                 })
 
 
-                viewModel.countryFlow.onEach { countries ->
-                    countries.map {
-                        googleMap.addMarker(
-                            MarkerOptions()
-                                .position(
-                                    LatLng(
-                                        it.latlng?.get(0) ?: 19.282319,
-                                        it.latlng?.get(1) ?: 166.647047
-                                    )
-                                )
-                                .title(it.name)
-                                .snippet(it.capital)
+                viewModel.countryFlow.onEach { lce ->
+                    when(lce){
+                        is LceState.Content -> {
+                            isVisibleProgressBar(false)
+                            lce.value.map {
+                                googleMap.addMarker(
+                                    MarkerOptions()
+                                        .position(
+                                            LatLng(
+                                                it.latlng?.get(0) ?: DEFAULT_LATITUDE,
+                                                it.latlng?.get(1) ?: DEFAULT_LONGTITUDE
+                                            )
+                                        )
+                                        .title(it.name)
+                                        .snippet(it.capital)
 
-                        )
+                                )
+                            }
+                        }
+                        is LceState.Error -> {
+                            isVisibleProgressBar(false)
+                            Toast.makeText(
+                                requireContext(), lce.throwable.message ?: "", Toast.LENGTH_SHORT).show()
+                        }
+                        LceState.Loading -> isVisibleProgressBar(true)
                     }
                 }.launchIn(viewLifecycleOwner.lifecycleScope)
 
@@ -177,6 +190,10 @@ class MapFragment : Fragment() {
         )
     }
 
+    private fun isVisibleProgressBar(visible:Boolean) {
+        binding.progressBar.isVisible = visible
+    }
+
     private fun setBottomSheetVisibility(isVisible: Boolean) {
         val updateState =
             if (isVisible) BottomSheetBehavior.STATE_EXPANDED else BottomSheetBehavior.STATE_COLLAPSED
@@ -195,5 +212,7 @@ class MapFragment : Fragment() {
 
     companion object {
         private const val DEFAULT_CAMERA_ZOOM = 17f
+        private const val DEFAULT_LATITUDE = 19.282319
+        private const val DEFAULT_LONGTITUDE = 166.647047
     }
 }

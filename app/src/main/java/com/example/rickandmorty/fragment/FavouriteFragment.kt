@@ -7,6 +7,8 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -16,6 +18,7 @@ import com.example.rickandmorty.R
 import com.example.rickandmorty.adapter.CharacterAdapter
 import com.example.rickandmorty.addHorizontalSpaceDecoration
 import com.example.rickandmorty.databinding.FragmentRoomListBinding
+import com.example.rickandmorty.domain.model.LceState
 import com.example.rickandmorty.paging.PagingData
 import com.example.rickandmorty.viewModel.FavouriteViewModel
 import kotlinx.coroutines.flow.launchIn
@@ -77,9 +80,25 @@ class FavouriteFragment : Fragment() {
 
     private fun showCharacters() {
         viewModel.characterDaoFlow
-            .onEach { it ->
-                adapter.submitList(it.map { PagingData.Content(it) })
+            .onEach { lce ->
+                when(lce){
+                    is LceState.Content -> {
+                        isVisibleProgressBar(false)
+                        adapter.submitList(lce.value.map { PagingData.Content(it) })
+                    }
+                    is LceState.Error -> {
+                        isVisibleProgressBar(false)
+                        Toast.makeText(
+                            requireContext(), lce.throwable.message ?: "", Toast.LENGTH_SHORT).show()
+                    }
+                    LceState.Loading -> isVisibleProgressBar(true)
+                }
             }.launchIn(viewLifecycleOwner.lifecycleScope)
+    }
+
+
+    private fun isVisibleProgressBar(visible:Boolean) {
+        binding.progressBar.isVisible = visible
     }
 
     private fun showDialog() {
@@ -92,6 +111,5 @@ class FavouriteFragment : Fragment() {
 
     companion object {
         private const val ITEM_SPACE = 50
-        private const val TAG = "CheckLifecycle"
     }
 }

@@ -19,5 +19,5 @@ internal data class CharacterEntity(
     @ColumnInfo(name = "status")
     val status: String,
     @ColumnInfo(name = "favourite")
-    var favourite: Boolean
+    var isFavourite: Boolean
 )

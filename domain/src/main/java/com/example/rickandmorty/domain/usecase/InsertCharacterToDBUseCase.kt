@@ -7,6 +7,6 @@ import com.example.rickandmorty.domain.repository.CharacterLocalRepository
 class InsertCharacterToDBUseCase(private val characterLocalRepository: CharacterLocalRepository) {
 
     suspend operator fun invoke(character: CharacterDetails){
-        characterLocalRepository.insert(character)
+       return characterLocalRepository.insert(character)
     }
 }

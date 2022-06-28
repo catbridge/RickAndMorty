@@ -34,5 +34,7 @@
         Нажмите на персонажа в списке, чтобы увидеть больше информации о нём.</string>
     <string name="info_settings">Это меню настроек.
         Здесь вы можете включить тёмную тему или изменить язык.</string>
+    <string name="toast_favourite">Список избранного был обновлен</string>
+    <string name="toast_error_query">По этому запросу ничего не найдено</string>
 
 </resources>

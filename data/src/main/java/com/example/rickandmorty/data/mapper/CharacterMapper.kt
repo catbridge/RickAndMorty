@@ -39,7 +39,7 @@ internal fun CharacterDetails.toCharacterEntity(): CharacterEntity {
         species = species,
         gender = gender,
         status = status,
-        favourite = favourite
+        isFavourite = isFavourite
     )
 }
 
@@ -60,17 +60,9 @@ internal fun CharacterEntity.toCharacterDetails(): CharacterDetails {
         gender = gender,
         status = status,
         episode = emptyList(),
-        favourite = favourite
+        isFavourite = isFavourite
     )
 }
-
-//internal fun Character.toCharacterEntity(): CharacterEntity {
-//    return CharacterEntity(
-//        id = id,
-//        name = name,
-//        image = image
-//    )
-//}
 
 internal fun ExtraRickDTO.toDomainModel(): Character {
     return Character(
